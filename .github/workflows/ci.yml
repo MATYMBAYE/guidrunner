@@ -23,7 +23,6 @@ jobs:
       
       - name: Test Varibales
         run: |
-          echo "Varibale MYVAR  ${{ vars.MYVAR }} "
           echo "Varibale IMAGE_NAME $IMAGE_NAME"
           echo "Varibale DOCKER_HUB_REGISTRY  $DOCKER_HUB_REGISTRY "
 
