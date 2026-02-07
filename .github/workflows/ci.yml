@@ -1,4 +1,4 @@
-name: CI Docker Build & Push
+name: CI Docker Build & Push   # Nom du workflow visible dans GitHub Actions
 
 on:
   push:
@@ -8,9 +8,8 @@ on:
 jobs:
   docker:
     runs-on: self-hosted
-#   runs-on: ubuntu-latest
-
-    #environment: dev
+    # Pour utiliser un runner GitHub fourni par GitHub, décommente la ligne suivante :
+    # runs-on: ubuntu-latest
 
     env:
       IMAGE_NAME: travaildocker
@@ -18,26 +17,27 @@ jobs:
       DOCKER_HUB_REGISTRY: docker.io/fatouseck98
 
     steps:
+      # Étape 1 : Récupérer le code
       - name: Récupération du code
         uses: actions/checkout@v4
-      
-#      - name: Test Varibales
-#        run: |
-#          echo "Varibale IMAGE_NAME $IMAGE_NAME"
-#          echo "Varibale DOCKER_HUB_REGISTRY  $DOCKER_HUB_REGISTRY "
 
+      # Étape 2 : Connexion à Docker Hub
       - name: Connexion à Docker Hub
-        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login 
-             -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+        run: |
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
+          -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
+      # Étape 3 : Construire l'image Docker
       - name: Build de l’image Docker
         run: |
           docker build -t $DOCKER_HUB_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .
-        
+
+      # Étape 4 : Tester l'image Docker
       - name: Test de l’image Docker
         run: |
-         docker image ls $DOCKER_HUB_REGISTRY/$IMAGE_NAME:$IMAGE_TAG 
+          docker image ls $DOCKER_HUB_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
 
+      # Étape 5 : Push de l'image Docker sur Docker Hub
       - name: Push de l’image Docker
         run: |
-         docker push $DOCKER_HUB_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+          docker push $DOCKER_HUB_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
